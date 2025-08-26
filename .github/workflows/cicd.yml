@@ -1,47 +1,54 @@
 name: CI-CD Angular → Docker Hub
 
-
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-
 env:
-  REGISTRY: docker.io
   IMAGE_NAME: isseu123/devoir-angular
-
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # 1️⃣ Récupère le code du dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Configure Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
-      - run: npm ci
-      - run: npm run build -- --configuration production
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+
+      # 3️⃣ Installer les dépendances
+      - name: Install dependencies
+        run: npm ci
+
+      # 4️⃣ Builder Angular en production
+      - name: Build Angular (production)
+        run: npm run build -- --configuration production
+
+      # 5️⃣ Configure Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 6️⃣ Login Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=sha
-      - uses: docker/build-push-action@v6
+
+      # 7️⃣ Construire et push l'image Docker
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.IMAGE_NAME }}:latest
