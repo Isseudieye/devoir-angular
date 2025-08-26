@@ -1,0 +1,50 @@
+<div class="col-md-8 offset-2 mt-5">
+    <h1>Liste des Hommes</h1>
+    <div class="card mt-5">
+        <div class="card-header">Formulaire</div>
+        <div class="card-body">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" class="form-control" [(ngModel)]="homme.nom" required>
+            
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" class="form-control" [(ngModel)]="homme.prenom" required>
+            
+            <label for="femme">Femmes</label>
+            <select multiple class="form-control" [(ngModel)]="homme.femme">
+                <option *ngFor="let femme of ['AWA', 'AIDA', 'FATOU', 'ZEYNA']" [value]="femme">{{ femme }}</option>
+            </select>
+            <br>
+            <button class="btn btn-success" (click)="addHomme()">
+                {{ homme.id !== 0 ? 'Modifier' : 'Ajouter' }}
+            </button>
+        </div>
+    </div>
+
+    <label for="search">Recherche</label>
+    <input type="text" id="search" class="form-control" [(ngModel)]="searchText"> 
+
+    <table class="table table-bordered mt-5">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Femmes</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let h of hommes | filtreHomme:searchText">
+                <td>{{ h.id }}</td>
+                <td>{{ h.nom }}</td>
+                <td>{{ h.prenom }}</td>
+                <td>{{ h.femme.join(', ') }}</td>
+                <td>
+                    <button class="btn btn-danger" (click)="deleteHomme(h.id)">Supprimer</button>
+                    <button class="btn btn-primary" (click)="recharge(h)">Modifier</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

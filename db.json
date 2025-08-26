@@ -1,0 +1,11 @@
+{
+    "users":[
+        {
+            "id": "1",
+            "libelle": "Pain",
+            "quantite": 50,
+            "prix": 1,
+            "categorie": "Alimentation"
+        }
+    ]
+}
